@@ -1,0 +1,33 @@
+/*Answer 1 hw2 - Archana R Sathyanarayanan , Mallika Kejriwal , Srishti Negi */
+/*Please compile this procedure first and then call this procedure below with the code */
+set serveroutput on;
+CREATE OR REPLACE PROCEDURE memberinfo(
+    mem_name IN VARCHAR2,
+    m_name OUT customer.NAME%TYPE,
+    m_status OUT MEMBER.membership_status%TYPE,
+    m_credit OUT MEMBER.credit_points%TYPE) AS   
+CURSOR poin IS 
+SELECT NAME,membership_status,credit_points
+from MEMBER, customer
+  where (customer.CUSTOMER_ID = MEMBER.MEMBER_ID
+     and customer.NAME = mem_name);
+
+BEGIN 
+  OPEN poin;
+     FETCH poin INTO m_name, m_status, m_credit;
+     dbms_output.Put_line('Welcome ' || m_name || ' you have a membership status of ' || m_status || ' with credit points  total of ' || m_credit);
+  CLOSE poin;  
+END;
+
+/*when the above procedure is compiled on our test data - please use this code to compile the result.
+You can also change the value of name name to get details provided it is present in our test data */
+set serveroutput on;
+         DECLARE
+             mem_name VARCHAR2(50);
+             m_name CUSTOMER.NAME%TYPE;
+             m_status MEMBER.membership_status%TYPE;
+             m_credit MEMBER.credit_points%TYPE;
+         BEGIN 
+              mem_name := 'Raghul';
+             memberinfo(mem_name,m_name, m_status, m_credit);
+         END;

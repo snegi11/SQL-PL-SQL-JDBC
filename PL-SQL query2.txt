@@ -1,0 +1,42 @@
+/*Answer 1 hw2 - Archana R Sathyanarayanan , Mallika Kejriwal , Srishti Negi */
+/*Please compile this procedure first and then call this procedure below with the code */
+set serveroutput on;
+CREATE OR REPLACE PROCEDURE theatre_staff(
+    cname IN VARCHAR2,
+    s_name OUT staff.staffname%TYPE,
+    s_day OUT staff_schedule.SHIFT_DAY%TYPE,
+    s_shiftfrom OUT staff_schedule.shift_from%TYPE,
+    s_shiftto OUT staff_schedule.shift_to%TYPE) AS  
+    
+CURSOR AOLA IS 
+SELECT staffname,SHIFT_DAY,shift_from,shift_to
+from staff,staff_schedule,theatre
+  where ( staff.STAFF_ID = staff_schedule.STAFF_ID and city = cname
+  and theatre.theatre_id = staff.theatre_id);
+  
+BEGIN 
+  OPEN AOLA;
+    LOOP
+     FETCH AOLA INTO s_name , s_day , s_shiftfrom , s_shiftto;
+     dbms_output.Put_line('Employee ' || s_name || ' works on this ' || s_day || ' between ' || s_shiftfrom || ' till ' || s_shiftto || ' at theatre in ' || cname || ' location ');
+     EXIT WHEN AOLA%NOTFOUND;
+    END LOOP;
+  CLOSE AOLA;  
+END;
+
+
+/*when the above procedure is compiled SUCCESSFULLY on our test data - please use this code to compile the result.*/
+/*You can always change theater loaction */
+    set serveroutput on;
+         DECLARE
+             cname VARCHAR2(50);
+             s_name staff.staffname%TYPE;
+             s_day staff_schedule.SHIFT_DAY%TYPE;
+             s_shiftfrom  staff_schedule.shift_from%TYPE;
+             s_shiftto staff_schedule.shift_to%TYPE;
+        BEGIN
+              cname := 'Chicago';
+              theatre_staff(cname,s_name,s_day,s_shiftfrom ,s_shiftto);
+        END;
+              
+    

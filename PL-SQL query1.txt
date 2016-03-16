@@ -1,0 +1,42 @@
+/*Answer 1 hw2 - Archana R Sathyanarayanan , Mallika Kejriwal , Srishti Negi */
+/*Please compile this procedure first and then call this procedure below with the code */
+set serveroutput on;
+CREATE OR REPLACE PROCEDURE recent_reviews(
+    m_name IN VARCHAR2,
+    r_comment OUT review_discussion."comment"%TYPE,
+    r_date OUT review_discussion.review_date%TYPE,
+    r_name OUT movie.title%TYPE) AS
+counter NUMBER;    
+CURSOR Curs IS 
+SELECT review_date,"comment",title
+from movie,review_discussion
+  where (review_discussion.movie_id = movie.movie_id
+     and movie.title = m_name)
+  ORDER BY review_discussion.REVIEW_DATE DESC;   
+  
+BEGIN 
+  OPEN Curs;
+  counter := 0;
+   LOOP 
+     FETCH Curs INTO r_date , r_comment , r_name;
+     EXIT WHEN Curs%NOTFOUND;
+     EXIT WHEN counter = 2;    
+     counter := counter+1;
+     dbms_output.Put_line('MOVIE: ' || r_name || '       REVIEW: ' || r_comment || '            REVIEWED ON: ' || r_date);
+   END LOOP;
+  CLOSE Curs;  
+END;
+
+
+/*when the above procedure is compiled on our test data - please use this code to compile the result.
+You can also change the valu of movie name to get details about your fav movie - provided it is present in our test data */
+set serveroutput on;
+         DECLARE
+             m_name VARCHAR2(50);
+             r_comment review_discussion."comment"%TYPE;
+             r_date review_discussion.review_date%TYPE;
+             r_name movie.title%TYPE;
+         BEGIN 
+             m_name := 'Love Actually';
+             recent_reviews(m_name, r_comment, r_date, r_name);
+         END;
